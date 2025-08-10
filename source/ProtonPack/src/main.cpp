@@ -97,6 +97,7 @@ void initPreferences()
 // callback function that will be executed when ESP data is received
 // TO DO - move this to espnowengine
 void onESPEventReceived(const uint8_t * mac, const uint8_t *incomingData, int len) {
+//void onESPEventReceived(const esp_now_recv_info *info, const uint8_t *incomingData, int len) {
     struct_message myData;
     memcpy(&myData, incomingData, sizeof(myData));
     byte type = incomingData[0];       // first message byte is the type of message
