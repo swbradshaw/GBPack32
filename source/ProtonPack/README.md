@@ -69,7 +69,7 @@ Pinouts:
 For my current implementation, I have the ESP32 placed *inside* my Full-size Spirit wand. I did this because I was having difficult with wire lengths for the LED SDA/SCL lines. There are probably ways to make this work but I just pivoted since I'm relatively new to this. This unfortunately makes the inside of the wand pretty messy. I don't currently have a custom PCB (outside of my knowledge), but this would be ideal.
 
 ## Hard coded configuration
-Some of the themes (Afterlife, KITT) have some hard-coded LED positions that are specific to my implemention. You will need to correct these for your implementation. Ideally LED configuration would be read from system memory or SD card.
+Some of the themes (Afterlife, KITT) have some hard-coded LED positions (see [common.h](src/common.h), [PackEngine.cpp](src/PackEngine.cpp)) that are specific to my Proton Pack implemention. You will need to correct these in the code for your implementation. Ideally LED configuration would be read from system memory or SD card.
 
 ## Credits
 
@@ -77,4 +77,7 @@ This library is written by Scott Bradshaw, inspired by other members of the open
 
 ## History
 
-1.0 Release in 2025-04-24
+1.0 - (2025-04-24) - Initial release
+
+1.1 - (2025-08-20) - Added volume metadata to event pipeline sent to powercell/cyclotron. Added baseball theme that demonstates this functionality.
+
