@@ -13,6 +13,7 @@
 #include "./powercell/1984.h"
 #include "./powercell/kitt.h"
 #include "./powercell/snowfall.h"
+#include "./powercell/volumecell.h"
 
 #include "./cyclotron/cyclotron.h"
 #include "./cyclotron/ledring.h"
@@ -22,6 +23,7 @@
 #include "./cyclotron/christmas.h"
 #include "./cyclotron/doublesway.h"
 #include "./cyclotron/alternate.h"
+#include "./cyclotron/volumetron.h"
 
 
 class PackEngine : public Observer<EventArgs>,  public Subject<EventArgs>
@@ -61,6 +63,8 @@ private:
     bool ventLightOn = false;
     bool wandVentOn = false;
     bool wandFiring = false;
+
+    bool ventSwitchTogglesVent = false;
 
     unsigned long wandFiringStart = 0;
     uint8_t lastOverheatStage = 0; // 1 -faster lights, 2 - even faster ligths, 3 = faster lights, stream + beeping, 4 - only beeping, 5 - start venting

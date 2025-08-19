@@ -30,8 +30,10 @@ void PackEngine::changeTheme(int themeMode)
   uint8_t bottomLeft = topLeft + 1;
   uint8_t bottomRight = topRight - 1;
   smokeColor = 150;
-
+  bool sendVolumeEvents = false;
+  ventSwitchTogglesVent = false;
   // switch based on themeMode
+  // FIXME - move this into some kind of theme management system
   switch (themeMode)
   {
   case 0: // 1984
@@ -83,6 +85,7 @@ void PackEngine::changeTheme(int themeMode)
     cyclotron = new DoubleSway(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255), 5, topLeft, topRight, bottomLeft, bottomRight);
     cyclotron->init();
     cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,0");
+    ventSwitchTogglesVent = true;
     break;
   case 6: // Hannukah
     powercell = new SnowPowercell(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
@@ -99,6 +102,16 @@ void PackEngine::changeTheme(int themeMode)
     cyclotron->setCustomValue(FADE_SETTING, "0,0,0,255,0,0");
     smokeColor = 85;
     break;
+  case 8: // Baseball
+    powercell = new VolumeCell(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(85));
+    // powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(85));
+    powercell->init();
+    cyclotron = new Volumetron(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(170));
+    cyclotron->init();
+    sendVolumeEvents = true;
+    ventSwitchTogglesVent = true;
+    break;
+
   default: // 1984
     powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
     powercell->init();
@@ -107,6 +120,12 @@ void PackEngine::changeTheme(int themeMode)
     cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,200");
     break;
   }
+
+  // Tell audio engine if this theme wants volume level events
+  EventArgs volumeEvents;
+  volumeEvents.eventName = EVENT_AUDIO_SEND_VOLUME_EVENTS;
+  volumeEvents.eventDetail1 = sendVolumeEvents ? "1" : "0";
+  Subject::notify(volumeEvents);
 
   if (packOn)
   {
@@ -147,7 +166,7 @@ void PackEngine::notify(EventArgs args)
 void PackEngine::handleAudioEvent(EventArgs args)
 {
 
-  debugln("handleAudioEvent in PackEngine: " + args.eventName);
+  // debugln("handleAudioEvent in PackEngine: " + args.eventName);
   if (args.eventName == EVENT_AUDIO_STOP_SOUND_CLIP)
   {
     powercell->notify(args);
@@ -163,6 +182,13 @@ void PackEngine::handleAudioEvent(EventArgs args)
   if (args.eventName == EVENT_AUDIO_PLAY_MOVIE_QUOTE)
   {
     powercell->notify(args);
+  }
+  if (args.eventName == EVENT_AUDIO_VOLUME)
+  {
+    // debugln(" V%: " + String(args.eventDetail1));
+    float volumePercent = args.eventDetail1.toFloat();
+    powercell->setPercent(volumePercent);
+    cyclotron->setPercent(volumePercent);
   }
 }
 
@@ -261,64 +287,68 @@ void PackEngine::handleEvent(EventArgs args)
 {
   debugln("PackEngine handleEvent: " + args.eventName);
 
-  if (args.eventName == EVENT_SMOKE_ON)
-  {
+  if (args.eventName == EVENT_SMOKE_ON) {
     enableVentLights(true);
   }
-  if (args.eventName == EVENT_SMOKE_OFF)
-  {
+  if (args.eventName == EVENT_SMOKE_OFF) {
     enableVentLights(false);
   }
 
-  if (args.eventName == EVENT_PACK_BOOTING)
-  {
+  if (args.eventName == EVENT_PACK_BOOTING) {
     packBooting = true;
     cyclotron->boot();
     powercell->boot();
   }
-  if (args.eventName == EVENT_PACK_IDLE)
-  {
+  if (args.eventName == EVENT_PACK_IDLE) {
     packBooting = false;
     packOn = true;
     cyclotron->idle();
     powercell->idle(false);
   }
-  if (args.eventName == EVENT_VENT_WAND_ON)
-  {
+  if (args.eventName == EVENT_VENT_WAND_ON) {
     wandVentOn = true;
+    if (ventSwitchTogglesVent) {
+      // toggle relay
+      EventArgs smokeEvent;
+      smokeEvent.eventName = EVENT_SMOKE_TURN_ON;
+      smokeEvent.eventDetail1 = "30000"; // 6 seconds
+      Subject::notify(smokeEvent);
+      enableVentLights(true);
+    }
   }
-  if (args.eventName == EVENT_VENT_WAND_OFF)
-  {
+  if (args.eventName == EVENT_VENT_WAND_OFF) {
     wandVentOn = false;
+    if (ventSwitchTogglesVent) {
+      // toggle relay
+      EventArgs smokeEvent;
+      smokeEvent.eventName = EVENT_SMOKE_TURN_OFF;
+      Subject::notify(smokeEvent);
+      enableVentLights(false);
+    }
   }
-  if (args.eventName == EVENT_WAND_FIRING_START)
-  {
+  if (args.eventName == EVENT_WAND_FIRING_START) {
     wandFiring = true;
     wandFiringStart = millis();
     cyclotron->setIsFiring(true);
     powercell->setIsFiring(true);
   }
-  if (args.eventName == EVENT_WAND_FIRING_STOP)
-  {
+  if (args.eventName == EVENT_WAND_FIRING_STOP) {
     wandFiring = false;
     cyclotron->setIsFiring(false);
     powercell->setIsFiring(false);
-    if (lastOverheatStage < 4)
-    {
+    if (lastOverheatStage < 4) {
       // wand stop firing; notify there is no overheating
       // if there was an overheat going on
       lastOverheatStage = 0;
       sendOverheatEvent();
     }
   }
-  if (args.eventName == EVENT_PACK_SHUTTING_DOWN)
-  {
+  if (args.eventName == EVENT_PACK_SHUTTING_DOWN) {
     packShuttingDown = true;
     powercell->powerDown();
     cyclotron->powerDown();
   }
-  if (args.eventName == EVENT_PACK_OFF)
-  {
+  if (args.eventName == EVENT_PACK_OFF) {
     packOn = false;
     packShuttingDown = false;
     cyclotron->packOff();
@@ -328,14 +358,12 @@ void PackEngine::handleEvent(EventArgs args)
 }
 
 // hardcoded - how long after stream starts before overheat starts?
-uint32_t PackEngine::getOverheatTime()
-{
+uint32_t PackEngine::getOverheatTime() {
   return 4000;
 }
 
 // hardcoded values for overheat stages
-uint8_t PackEngine::getOverheatStage(unsigned long timeSinceStart)
-{
+uint8_t PackEngine::getOverheatStage(unsigned long timeSinceStart) {
   if (timeSinceStart < 4000)
   {
     return 0;

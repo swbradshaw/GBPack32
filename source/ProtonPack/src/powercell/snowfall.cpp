@@ -7,6 +7,7 @@ void SnowPowercell::init() {
 }
 
 void SnowPowercell::notify(EventArgs args) {}
+void SnowPowercell::setPercent(float percent) {}
 
 bool SnowPowercell::work() {
      if ((millis() - lastUpdate) > interval) {

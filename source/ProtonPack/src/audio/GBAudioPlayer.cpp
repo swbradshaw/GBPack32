@@ -20,8 +20,12 @@ void GBAudioPlayer::init(float volume) {
     out.begin(cfg_output);
 
     fade.setOutput(out);
+
     volume_out.setOutput(fade);
-    out_decoding.setOutput(volume_out);
+
+    volume_meter_out.setOutput(volume_out);
+
+    out_decoding.setOutput(volume_meter_out);
     out_decoding.setDecoder(&decoder);
     // wavDecoder.addNotifyAudioChange(*this);
     decoder.addNotifyAudioChange(*this);
@@ -57,6 +61,7 @@ void GBAudioPlayer::setAudioInfo(AudioInfo info) {
     this->info = info;
     // notify volume
     volume_out.setAudioInfo(info);
+    volume_meter_out.setAudioInfo(info);
     fade.setAudioInfo(info);
 };
 
@@ -98,6 +103,10 @@ float GBAudioPlayer::getVolume() {
     return current_volume;
 }
 
+void GBAudioPlayer::shouldSendVolumeEvents(bool send) {
+    sendVolumeEvents = send;
+}
+
 void GBAudioPlayer::playFile(String filename, uint32_t startPosition) {
     if (audioInitialized) {
         stopPlaying(true);
@@ -130,9 +139,22 @@ void GBAudioPlayer::playFile(String filename, uint32_t startPosition) {
 void GBAudioPlayer::audioLoop() {
     if (playing) {
         if (copier.isActive()) {
-            if (!copier.copy()) {
+          if (!copier.copy()) {
                 stopPlaying(false);
-            }
+                if (sendVolumeEvents) {
+                  EventArgs volArgs;
+                  volArgs.eventName = EVENT_AUDIO_VOLUME;
+                  volArgs.eventDetail1 = String(0);
+                  Subject::notify(volArgs);
+                }
+          } else {
+              if (sendVolumeEvents) {
+                EventArgs volArgs;
+                volArgs.eventName = EVENT_AUDIO_VOLUME;
+                volArgs.eventDetail1 = String(volume_meter_out.volumePercent());
+                Subject::notify(volArgs);
+             }
+          }
         }
     }
 }

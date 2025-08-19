@@ -194,6 +194,8 @@ class AudioTheme : public Subject<EventArgs>
                 return "/audio/pack-sounds/hanukkah";
             case 7:
                 return "/audio/pack-sounds/stpatricks";
+            case 8:
+                return "/audio/pack-sounds/baseball";
             default:
                 return "/audio/pack-sounds/84";
         }

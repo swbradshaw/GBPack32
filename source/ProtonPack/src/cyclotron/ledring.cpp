@@ -1,6 +1,8 @@
 #include "ledring.h"
 #include "../common.h"
 
+void LedRing::setPercent(float percent) {}
+
 void LedRing::init() {
     totalLEDs = endLED - startLED + 1;
     debugln("LedRing: init "+String(startLED)+" "+String(endLED));

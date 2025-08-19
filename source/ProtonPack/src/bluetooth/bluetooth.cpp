@@ -1,12 +1,10 @@
 
 #include "../common.h"
 #include "bluetooth.h"
-#include <Arduino.h>
-#include "AudioTools.h"
-// include Wifi to read the MAC address
-#include <WiFi.h>
 
-BluetoothA2DPSink a2dp_sink;
+I2SStream i2s;
+BluetoothA2DPSink a2dp_sink(i2s);
+
 void (*bluetoothCallback)(int, const uint8_t *text);
 
 int volume = 0;
@@ -39,6 +37,13 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 
 void setupBluetooth(void (*bluetoothMetadataCallback)(int, const uint8_t *text), uint8_t BCK_PIN, uint8_t WS_PIN, uint8_t DATA_OUT_PIN) {
     bluetoothCallback = bluetoothMetadataCallback;
+    // auto cfg = i2s.defaultConfig();
+    // cfg.pin_bck = BCK_PIN;
+    // cfg.pin_ws = WS_PIN;
+    // cfg.pin_data = DATA_OUT_PIN;
+
+    // i2s.begin(cfg);
+
     i2s_pin_config_t my_pin_config = {
         .mck_io_num = I2S_PIN_NO_CHANGE,
         .bck_io_num = BCK_PIN,

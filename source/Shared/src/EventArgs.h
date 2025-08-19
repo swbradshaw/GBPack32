@@ -22,6 +22,8 @@ static constexpr auto EVENT_AUDIO_INIT = "EVENT_AUDIO_INIT";
 static constexpr auto EVENT_AUDIO_SHUTDOWN = "EVENT_AUDIO_SHUTDOWN";
 static constexpr auto EVENT_AUDIO_STOPPED_PLAYING = "EVENT_AUDIO_STOPPED_PLAYING";
 static constexpr auto EVENT_AUDIO_STARTED_PLAYING = "EVENT_AUDIO_STARTED_PLAYING";
+static constexpr auto EVENT_AUDIO_VOLUME = "EVENT_AUDIO_VOLUME";
+static constexpr auto EVENT_AUDIO_SEND_VOLUME_EVENTS = "EVENT_AUDIO_SEND_VOLUME_EVENTS";
 static constexpr auto EVENT_PLAY_SOUND = "EVENT_PLAY_SOUND";
 
 static constexpr auto EVENT_AUDIO_PLAY_SOUND_CLIP = "EVENT_AUDIO_PLAY_SOUND_CLIP";
@@ -58,6 +60,8 @@ static constexpr auto EVENT_OVERHEAT = "EVENT_OVERHEAT";
 // Smoke events
 static constexpr auto EVENT_SMOKE_ON = "EVENT_SMOKE_ON";
 static constexpr auto EVENT_SMOKE_OFF = "EVENT_SMOKE_OFF";
+static constexpr auto EVENT_SMOKE_TURN_ON = "EVENT_SMOKE_TURN_ON";
+static constexpr auto EVENT_SMOKE_TURN_OFF = "EVENT_SMOKE_TURN_OFF";
 static constexpr auto EVENT_VENT_PACK = "EVENT_VENT_PACK";
 static constexpr auto EVENT_OVERHEAT_COMPLETE = "EVENT_OVERHEAT_COMPLETE";
 
