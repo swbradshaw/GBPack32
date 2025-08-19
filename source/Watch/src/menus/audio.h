@@ -4,7 +4,6 @@
 #include "EventArgs.h"
 #include "LilyGoLib.h"
 
-extern LilyGoLib watch;
 extern EspNowEngine espNowEngine;
 extern const lv_font_t *menufont;
 lv_obj_t *volume_label;
@@ -50,8 +49,8 @@ lv_obj_t * create_audio_menu(lv_obj_t * parent) {
             lv_label_set_text_fmt(volume_label, "Volume: %d", volume); // Update label with new volume value
             espNowEngine.sendEventWithDetail("EVENT_AUDIO_VOLUME_CHANGE", String(volume).c_str());
 
-            watch.setWaveform(0, HAPTIC_WAVEFORM_CLICK);  // play effect
-            watch.run();
+            instance.drv.setWaveform(0, HAPTIC_WAVEFORM_CLICK);  // play effect
+            instance.drv.run();
         }
     }, LV_EVENT_RELEASED, NULL);
 
@@ -91,8 +90,8 @@ lv_obj_t * create_audio_menu(lv_obj_t * parent) {
                     espNowEngine.sendEventWithDetail(EVENT_BUTTON_AUDIO, "LONG_CLICK");
                 }
 
-                watch.setWaveform(0, HAPTIC_WAVEFORM_CLICK);  // play effect
-                watch.run();
+                instance.drv.setWaveform(0, HAPTIC_WAVEFORM_CLICK);  // play effect
+                instance.drv.run();
             }
         }
     }, LV_EVENT_ALL, NULL);
