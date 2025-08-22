@@ -1,13 +1,11 @@
 #include "PackEngine.h"
 
 // constructor for PackEngine
-PackEngine::PackEngine(Adafruit_NeoPixel &strip) : _packLeds(strip)
-{
+PackEngine::PackEngine(Adafruit_NeoPixel &strip) : _packLeds(strip) {
   numVentLeds = PACK_LED_VENT_LAST - PACK_LED_VENT_1ST + 1;
 }
 
-void PackEngine::init()
-{
+void PackEngine::init() {
   debugln("PackEngine init");
   _packLeds.begin();
   _packLeds.setBrightness(255);
@@ -18,8 +16,7 @@ void PackEngine::init()
   _packLeds.show();
   delayTimer.start(150);
 }
-void PackEngine::changeTheme(int themeMode)
-{
+void PackEngine::changeTheme(int themeMode) {
   debugln("PackEngine: Changed Theme: " + themeMode);
   delete powercell;
   delete cyclotron;
@@ -30,95 +27,97 @@ void PackEngine::changeTheme(int themeMode)
   uint8_t bottomLeft = topLeft + 1;
   uint8_t bottomRight = topRight - 1;
   smokeColor = 150;
-  bool sendVolumeEvents = false;
+  sendVolumeEvents = false;
   ventSwitchTogglesVent = false;
   // switch based on themeMode
   // FIXME - move this into some kind of theme management system
-  switch (themeMode)
-  {
-  case 0: // 1984
-    powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
-    powercell->init();
-    cyclotron = new LedRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255));
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,0");
-    break;
-  case 1: // AFTERLIFE
-    powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
-    powercell->init();
-    /* March 2025 - Modified afterife ring to take in a static list of LED positions to cycle through
-      This is defind as ledRingVisibleLeds in the header file.
-      This allows us to bypass lighting up LEDs that arent visible and makes the animation faster.
-    */
+  switch (themeMode) {
+    case 0:  // 1984
+      powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
+      powercell->init();
+      cyclotron = new LedRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255));
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,0");
+      break;
+    case 1:  // AFTERLIFE
+      powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
+      powercell->init();
+      /* March 2025 - Modified afterife ring to take in a static list of LED positions to
+        cycle through This is defind as ledRingVisibleLeds in the header file. This allows us
+        to bypass lighting up LEDs that arent visible and makes the animation faster.
+      */
 
-    cyclotron = new AfterlifeRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255), ledRingVisibleLeds, 16);
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,0");
-    break;
-  case 2: // SLIME
-    powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
-    powercell->init();
+      cyclotron = new AfterlifeRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255),
+                                    ledRingVisibleLeds, 16);
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,0");
+      break;
+    case 2:  // SLIME
+      powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
+      powercell->init();
 
-    cyclotron = new SlimeRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(85));
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,0,0,255,0,0");
-    break;
-  case 3: // MESON
-    powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
-    powercell->init();
+      cyclotron = new SlimeRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(85));
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,0,0,255,0,0");
+      break;
+    case 3:  // MESON
+      powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
+      powercell->init();
 
-    cyclotron = new LedRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(42));
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,129,0,126,0,0");
-    break;
-  case 4: // CHRISTMAS
-    powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
-    powercell->init();
+      cyclotron = new LedRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(42));
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,129,0,126,0,0");
+      break;
+    case 4:  // CHRISTMAS
+      powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
+      powercell->init();
 
-    cyclotron = new ChristmasRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(85));
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,0,0,255,0,0");
-    break;
-  case 5: // KITT / knight rider
-    powercell = new KittPowercell(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(255), 3);
-    powercell->init();
-    cyclotron = new DoubleSway(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255), 5, topLeft, topRight, bottomLeft, bottomRight);
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,0");
-    ventSwitchTogglesVent = true;
-    break;
-  case 6: // Hannukah
-    powercell = new SnowPowercell(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
-    powercell->init();
-    cyclotron = new Dredel(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(170));
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,0,0,0,0,255");
-    break;
-  case 7: // St. Patrick
-    powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(85));
-    powercell->init();
-    cyclotron = new Alternate(_packLeds, topLeftLeds, topRightLeds, bottomLeftLeds, bottomRightLeds, Wheel(85));
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,0,0,255,0,0");
-    smokeColor = 85;
-    break;
-  case 8: // Baseball
-    powercell = new VolumeCell(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(85));
-    // powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(85));
-    powercell->init();
-    cyclotron = new Volumetron(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(170));
-    cyclotron->init();
-    sendVolumeEvents = true;
-    ventSwitchTogglesVent = true;
-    break;
+      cyclotron = new ChristmasRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(85));
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,0,0,255,0,0");
+      break;
+    case 5:  // KITT / knight rider
+      powercell = new KittPowercell(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(255), 3);
+      powercell->init();
+      cyclotron = new DoubleSway(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255), 5, topLeft,
+                                 topRight, bottomLeft, bottomRight);
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,0");
+      ventSwitchTogglesVent = true;
+      break;
+    case 6:  // Hannukah
+      powercell = new SnowPowercell(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
+      powercell->init();
+      cyclotron = new Dredel(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(170));
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,0,0,0,0,255");
+      break;
+    case 7:  // St. Patrick
+      powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(85));
+      powercell->init();
+      cyclotron = new Alternate(_packLeds, topLeftLeds, topRightLeds, bottomLeftLeds, bottomRightLeds, Wheel(85));
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,0,0,255,0,0");
+      smokeColor = 85;
+      break;
+    case 8:  // Baseball
+      powercell = new VolumeCell(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(85));
+      // powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST,
+      // PACK_LED_POWERCELL_LAST, Wheel(85));
+      powercell->init();
+      cyclotron = new Volumetron(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(170));
+      cyclotron->init();
+      sendVolumeEvents = true;
+      ventSwitchTogglesVent = true;
+      break;
 
-  default: // 1984
-    powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
-    powercell->init();
-    cyclotron = new LedRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255));
-    cyclotron->init();
-    cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,200");
-    break;
+    default:  // 1984
+      powercell = new EightyFour(_packLeds, PACK_LED_POWERCELL_1ST, PACK_LED_POWERCELL_LAST, Wheel(170));
+      powercell->init();
+      cyclotron = new LedRing(_packLeds, PACK_LED_CYCLOTRON_1ST, PACK_LED_CYCLOTRON_LAST, Wheel(255));
+      cyclotron->init();
+      cyclotron->setCustomValue(FADE_SETTING, "0,255,0,0,0,200");
+      break;
   }
 
   // Tell audio engine if this theme wants volume level events
@@ -127,87 +126,68 @@ void PackEngine::changeTheme(int themeMode)
   volumeEvents.eventDetail1 = sendVolumeEvents ? "1" : "0";
   Subject::notify(volumeEvents);
 
-  if (packOn)
-  {
+  if (packOn) {
     // user changed themes while pack was on, attempt to force idle state
     cyclotron->idle();
     powercell->idle(true);
   }
 }
 
-void PackEngine::notify(EventArgs args)
-{
-  if (args.eventName.startsWith("EVENT_PACK_"))
-  {
+void PackEngine::notify(EventArgs args) {
+  if (args.eventName.startsWith("EVENT_PACK_")) {
     handleEvent(args);
   }
-  if (args.eventName.startsWith("EVENT_WAND_"))
-  {
+  if (args.eventName.startsWith("EVENT_WAND_")) {
     handleEvent(args);
   }
-  if (args.eventName.startsWith("EVENT_AUDIO"))
-  {
+  if (args.eventName.startsWith("EVENT_AUDIO")) {
     handleAudioEvent(args);
   }
-  if (args.eventName.startsWith("EVENT_OVERHEAT"))
-  {
+  if (args.eventName.startsWith("EVENT_OVERHEAT")) {
     handleOverheatEvent(args);
   }
-  if (args.eventName.equals("EVENT_THEME_CHANGE"))
-  {
+  if (args.eventName.equals("EVENT_THEME_CHANGE")) {
     changeTheme(args.eventDetail1.toInt());
   }
-  if (args.eventName.startsWith("EVENT_SMOKE"))
-  {
+  if (args.eventName.startsWith("EVENT_SMOKE")) {
     handleEvent(args);
   }
 }
 
-void PackEngine::handleAudioEvent(EventArgs args)
-{
-
+void PackEngine::handleAudioEvent(EventArgs args) {
   // debugln("handleAudioEvent in PackEngine: " + args.eventName);
-  if (args.eventName == EVENT_AUDIO_STOP_SOUND_CLIP)
-  {
+  if (args.eventName == EVENT_AUDIO_STOP_SOUND_CLIP) {
     powercell->notify(args);
   }
-  if (args.eventName == EVENT_AUDIO_STOP_MOVIE_QUOTE)
-  {
+  if (args.eventName == EVENT_AUDIO_STOP_MOVIE_QUOTE) {
     powercell->notify(args);
   }
-  if (args.eventName == EVENT_AUDIO_PLAY_SOUND_CLIP)
-  {
+  if (args.eventName == EVENT_AUDIO_PLAY_SOUND_CLIP) {
     powercell->notify(args);
   }
-  if (args.eventName == EVENT_AUDIO_PLAY_MOVIE_QUOTE)
-  {
+  if (args.eventName == EVENT_AUDIO_PLAY_MOVIE_QUOTE) {
     powercell->notify(args);
   }
-  if (args.eventName == EVENT_AUDIO_VOLUME)
-  {
-    // debugln(" V%: " + String(args.eventDetail1));
+  if (args.eventName == EVENT_AUDIO_VOLUME && sendVolumeEvents) {
     float volumePercent = args.eventDetail1.toFloat();
     powercell->setPercent(volumePercent);
     cyclotron->setPercent(volumePercent);
   }
 }
 
-void PackEngine::handleOverheatEvent(EventArgs args)
-{
-  if (args.eventName == EVENT_OVERHEAT)
-  {
+void PackEngine::handleOverheatEvent(EventArgs args) {
+  if (args.eventName == EVENT_OVERHEAT) {
     int stage = args.eventDetail1.toInt();
     // Tell our powercell and cyclotron about the overheating stage
     powercell->setOverheating(stage);
     cyclotron->setOverheating(stage);
     // if we've reached stage 5 (vent), turn on the vent light on the cycltotron
-    if (stage == 5)
-    {
+    if (stage == 5) {
       enableVentLights(true);
     }
   }
-  if (args.eventName == EVENT_OVERHEAT_COMPLETE)
-  { // sent from audio engine
+  if (args.eventName == EVENT_OVERHEAT_COMPLETE) {
+    // sent from audio engine
     enableVentLights(false);
     wandFiring = false;
     powercell->setIsFiring(false);
@@ -218,22 +198,20 @@ void PackEngine::handleOverheatEvent(EventArgs args)
   }
 }
 
-void PackEngine::handleOverheat()
-{
+void PackEngine::handleOverheat() {
   // calculate the stage of overheating
-  // 1 -faster lights, 2 - even faster ligths, 3 = faster lights,  stream w/beeping, 4 - overheated; beeping only, 5 - start venting
+  // 1 -faster lights, 2 - even faster ligths, 3 = faster lights,  stream w/beeping, 4 -
+  // overheated; beeping only, 5 - start venting
   long timeSinceStart = millis() - wandFiringStart;
   uint32_t stage = getOverheatStage(timeSinceStart);
-  if (stage != lastOverheatStage)
-  {
+  if (stage != lastOverheatStage) {
     lastOverheatStage = stage;
     debugln("New Overheat stage: " + String(lastOverheatStage));
     sendOverheatEvent();
   }
 }
 
-void PackEngine::sendOverheatEvent()
-{
+void PackEngine::sendOverheatEvent() {
   EventArgs overheatEvent;
   overheatEvent.eventName = EVENT_OVERHEAT;
   overheatEvent.eventDetail1 = String(lastOverheatStage);
@@ -241,26 +219,21 @@ void PackEngine::sendOverheatEvent()
   handleOverheatEvent(overheatEvent);
 }
 
-void PackEngine::work()
-{
+void PackEngine::work() {
   // tell our cyclotron and powercell to do their work
   // if they return true, we need to update the leds
   bool powercellWork = powercell->work();
   bool cyclotronWork = cyclotron->work();
 
-  if (powercellWork || cyclotronWork)
-  {
+  if (powercellWork || cyclotronWork) {
     _packLeds.show();
   }
 
   // check for overheating, which is based off how long wand has been firing
-  if (delayTimer.justFinished())
-  {
-    if ((wandFiring) && (!wandVentOn))
-    {
+  if (delayTimer.justFinished()) {
+    if ((wandFiring) && (!wandVentOn)) {
       // for how long? notify wand and pack that its overheating?
-      if (millis() - wandFiringStart > getOverheatTime())
-      {
+      if (millis() - wandFiringStart > getOverheatTime()) {
         // overheat
         handleOverheat();
       }
@@ -269,11 +242,9 @@ void PackEngine::work()
   }
 }
 
-void PackEngine::enableVentLights(bool OnorOff)
-{
+void PackEngine::enableVentLights(bool OnorOff) {
   uint32_t color = OnorOff ? Wheel(smokeColor) : 0;
-  for (uint8_t i = 0; i < numVentLeds; i++)
-  {
+  for (uint8_t i = 0; i < numVentLeds; i++) {
     _packLeds.setPixelColor(PACK_LED_VENT_1ST + i, color);
   }
   _packLeds.show();
@@ -283,8 +254,7 @@ void PackEngine::enableVentLights(bool OnorOff)
   Dispatch events to cycltron and powercell
   as well as handle n-filter lights
 */
-void PackEngine::handleEvent(EventArgs args)
-{
+void PackEngine::handleEvent(EventArgs args) {
   debugln("PackEngine handleEvent: " + args.eventName);
 
   if (args.eventName == EVENT_SMOKE_ON) {
@@ -311,7 +281,7 @@ void PackEngine::handleEvent(EventArgs args)
       // toggle relay
       EventArgs smokeEvent;
       smokeEvent.eventName = EVENT_SMOKE_TURN_ON;
-      smokeEvent.eventDetail1 = "30000"; // 6 seconds
+      smokeEvent.eventDetail1 = "30000";  // 6 seconds
       Subject::notify(smokeEvent);
       enableVentLights(true);
     }
@@ -358,30 +328,23 @@ void PackEngine::handleEvent(EventArgs args)
 }
 
 // hardcoded - how long after stream starts before overheat starts?
-uint32_t PackEngine::getOverheatTime() {
-  return 4000;
-}
+uint32_t PackEngine::getOverheatTime() { return 4000; }
 
 // hardcoded values for overheat stages
 uint8_t PackEngine::getOverheatStage(unsigned long timeSinceStart) {
-  if (timeSinceStart < 4000)
-  {
+  if (timeSinceStart < 4000) {
     return 0;
   }
-  if (timeSinceStart < 7500)
-  {
+  if (timeSinceStart < 7500) {
     return 1;
   }
-  if (timeSinceStart < 9000)
-  {
+  if (timeSinceStart < 9000) {
     return 2;
   }
-  if (timeSinceStart < 13000)
-  {
+  if (timeSinceStart < 13000) {
     return 3;
   }
-  if (timeSinceStart < 15000)
-  {
+  if (timeSinceStart < 15000) {
     return 4;
   }
   return 5;

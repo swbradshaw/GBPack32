@@ -52,6 +52,7 @@ class GBAudioPlayer : public Subject<EventArgs>, public AudioInfoSupport
     String lastPlayed = "";
     String postEvent = "";
     void notifyStopped();
+    void sendVolumeEvent(float volume);
     void dataCallback(MP3FrameInfo &info, short *pcm_buffer, size_t len, void* ref);
 
 };

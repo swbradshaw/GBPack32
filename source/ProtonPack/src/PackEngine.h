@@ -65,6 +65,7 @@ private:
     bool wandFiring = false;
 
     bool ventSwitchTogglesVent = false;
+    bool sendVolumeEvents = false;
 
     unsigned long wandFiringStart = 0;
     uint8_t lastOverheatStage = 0; // 1 -faster lights, 2 - even faster ligths, 3 = faster lights, stream + beeping, 4 - only beeping, 5 - start venting

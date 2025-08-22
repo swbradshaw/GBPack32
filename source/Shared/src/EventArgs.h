@@ -81,6 +81,8 @@ static constexpr auto CMD_STOP_BLUETOOTH = "CMD_STOP_BLUETOOTH";
 static constexpr auto CMD_BLUETOOTH_PLAY = "CMD_BLUETOOTH_PLAY";
 static constexpr auto CMD_BLUETOOTH_PAUSE = "CMD_BLUETOOTH_PAUSE";
 
+static constexpr auto CMD_RESTART_PACK = "CMD_RESTART_PACK";
+
 
 struct EventArgs
 {

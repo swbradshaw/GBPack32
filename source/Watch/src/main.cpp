@@ -21,7 +21,10 @@ millisDelay ms_logo;
 millisDelay ms_screenTimeout;
 millisDelay ms_checkLastTouch;
 millisDelay ms_watchSleepTimeout;
+millisDelay ms_ClickTimeout;
 EspNowEngine espNowEngine;
+
+int crownClickCount = 0;
 
 RTC_DATA_ATTR int bootCount = 0;
 bool  pmu_flag = false;
@@ -61,7 +64,7 @@ static void touchpad_read( lv_indev_t *drv, lv_indev_data_t *data )
 }
 
 lv_obj_t *tv;
-const lv_font_t *menufont = &lv_font_montserrat_20;
+const lv_font_t *menufont = &lv_font_montserrat_22;
 
 void initEspNow() {
 
@@ -132,7 +135,8 @@ void setup() {
 
     instance.onEvent([](DeviceEvent_t event, void * user_data) {
         ms_watchSleepTimeout.restart();
-        espNowEngine.sendEvent(EVENT_AUDIO_SHUFFLE_BACKGROUND);
+        ms_ClickTimeout.start(300);
+        crownClickCount++;
     }, PMU_EVENT_KEY_CLICKED, NULL);
 
     instance.onEvent([](DeviceEvent_t event, void * user_data) {
@@ -142,6 +146,11 @@ void setup() {
 
   }
 
+
+void vibrate() {
+  instance.drv.setWaveform(0, HAPTIC_WAVEFORM_CLICK);  // play effect
+  instance.drv.run();
+}
 
 void processTimers() {
 
@@ -175,6 +184,21 @@ void processTimers() {
         // put watch to sleep
         // instance.setSleepMode(TOUCH_WAKEUP);
         instance.sleep(WAKEUP_SRC_TOUCH_PANEL); //WAKEUP_SRC_TOUCH_PANEL);
+      }
+      if (ms_ClickTimeout.justFinished()) {
+        // Handle click timeout
+        if (crownClickCount == 1) {
+            espNowEngine.sendEvent(EVENT_AUDIO_SHUFFLE_BACKGROUND);
+        }
+        if (crownClickCount == 2) {
+          // stop audio
+            espNowEngine.sendEventWithDetail(EVENT_BUTTON_AUDIO, "LONG_CLICK");
+        }
+        if (crownClickCount > 4) {
+          // restart pack
+          espNowEngine.sendEvent(CMD_RESTART_PACK);
+        }
+        crownClickCount = 0;
       }
 }
 

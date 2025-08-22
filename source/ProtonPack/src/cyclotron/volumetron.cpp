@@ -47,10 +47,14 @@ bool Volumetron::work() {
 
 
 void Volumetron::initLeds() {
-    for (uint8_t i = startLED; i < endLED+1; i++) {
-        _packLeds.setPixelColor(i, Wheel(color));
+    if (currentBrightness > 125) {
+      _packLeds.setBrightness(255);
+      for (uint8_t i = startLED; i < endLED+1; i++) {
+          _packLeds.setPixelColor(i, Wheel(color));
+      }
+    } else {
+      clear();
     }
-    _packLeds.setBrightness(currentBrightness);
 }
 
 
