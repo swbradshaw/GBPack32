@@ -3,6 +3,9 @@
 #include <Arduino.h>
 #include <esp_now.h>
 #include <WiFi.h>
+#include "Observer.h"
+#include "EventArgs.h"
+#include "common.h"
 
 typedef struct struct_message {
     byte version;
@@ -12,7 +15,7 @@ typedef struct struct_message {
 } struct_message;
 
 
-class EspNowEngine
+class EspNowEngine : public Observer<EventArgs>
 {
     public:
         EspNowEngine();
@@ -20,6 +23,7 @@ class EspNowEngine
 
         void init();
         void deinit();
+        void notify(EventArgs args) override;
         void sendEvent(String eventName);
         void sendEventWithDetail(String eventName, String eventDetail);
         void setPeerAddress(const uint8_t *address);

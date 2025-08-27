@@ -13,6 +13,8 @@ EspNowEngine::~EspNowEngine()
 void EspNowEngine::deinit()
 {
     esp_now_deinit();
+    WiFi.mode(WIFI_OFF);
+    delay(100);
     Serial.println("ESP Now deinitialized");
 }
 void EspNowEngine::init()
@@ -34,6 +36,17 @@ void EspNowEngine::init()
 
     // Register receive callback
     esp_now_register_recv_cb(onDataRecvCallback);
+
+    debugln("ESPNOW ready.");
+}
+
+void EspNowEngine::notify(EventArgs args) {
+  if (args.eventName == EVENT_AUDIO_INIT) {
+      init();
+  }
+  if (args.eventName == EVENT_AUDIO_SHUTDOWN) {
+      deinit();
+  }
 }
 
 void EspNowEngine::sendEvent(String eventName)

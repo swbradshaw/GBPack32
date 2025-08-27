@@ -9,6 +9,7 @@
   8 - Firing LED
   9-18 - 10 Barrel LEDs
 */
+// FIXME - move Wand LED logic to external class - make it part of the themeing
 
 // constructor for WandEngine
     WandEngine::WandEngine(Adafruit_NeoPixel &strip) :
