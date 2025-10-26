@@ -22,6 +22,7 @@ class SnowPowercell : public Powercell {
         virtual bool work();
         virtual void setIsFiring(bool IsFire);
         virtual void notify(EventArgs args);
+        virtual void setPercent(float percent);
         virtual void setOverheating(int stage);
 
         virtual ~SnowPowercell() {};

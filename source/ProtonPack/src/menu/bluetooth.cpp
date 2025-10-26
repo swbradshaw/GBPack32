@@ -15,15 +15,12 @@ void mBluetooth_para(uint8_t line)
       if(LCDML.BT_checkEnter())
       {
         if (isBluetoothOn()) {
-          Serial.println("enter, stop bluetooth");
-          stopBluetooth();
-          // todo read last volume
-          audioEngine.init(1.0f);
-          // ESP.restart();
+          Serial.println("stop bluetooth - rebooting");
+          ESP.restart();
         } else {
-          //stopAudio();
           Serial.println("enter, start bluetooth");
           audioEngine.shutdownAudioEngine();
+          delay(100);
           startBluetooth();
         }
 

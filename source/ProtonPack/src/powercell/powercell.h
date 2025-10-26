@@ -18,7 +18,9 @@ class Powercell {
         virtual void setIsFiring(bool IsFire) = 0;
         // overheating stage 0 (none) - 4 (overheated),  5 (venting)
         virtual void setOverheating(int stage) = 0;
-        virtual void notify(EventArgs args);
+        // set the powercell percentage (0-100) - not used in every theme
+        virtual void setPercent(float percent) = 0;
+        virtual void notify(EventArgs args) = 0;
 
         virtual ~Powercell() {};
 

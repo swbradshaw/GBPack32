@@ -18,7 +18,7 @@ lv_obj_t * get_status_bar() {
 
     // Add a label to display the battery percentage
     lv_obj_t *battery_label = lv_label_create(status_bar);
-    lv_label_set_text_fmt(battery_label, "Bat: %d%%", watch.getBatteryPercent());
+    lv_label_set_text_fmt(battery_label, "Bat: %d%%", instance.pmu.getBatteryPercent());
     lv_obj_align(battery_label, LV_ALIGN_RIGHT_MID, 0, 0); // Align to the far right with some padding
     return status_bar;
 }

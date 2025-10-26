@@ -97,6 +97,7 @@ void initPreferences()
 // callback function that will be executed when ESP data is received
 // TO DO - move this to espnowengine
 void onESPEventReceived(const uint8_t * mac, const uint8_t *incomingData, int len) {
+//void onESPEventReceived(const esp_now_recv_info *info, const uint8_t *incomingData, int len) {
     struct_message myData;
     memcpy(&myData, incomingData, sizeof(myData));
     byte type = incomingData[0];       // first message byte is the type of message
@@ -113,6 +114,7 @@ void onESPEventReceived(const uint8_t * mac, const uint8_t *incomingData, int le
          event.eventDetail1 = String(myData.event_detail1);
          Serial.print("Event from watch: ");
          Serial.println(myData.event_name);
+         // FIXME - this should be a regular event, nothing specific to watch
          eventEngine.handleWatchEvent(event);
          break;
        default:
@@ -123,12 +125,10 @@ void onESPEventReceived(const uint8_t * mac, const uint8_t *incomingData, int le
 
 void initEspNow() {
     espNowEngine.setOnDataRecvCallback(onESPEventReceived);
-    espNowEngine.init();
-    debugln("ESPNOW ready.");
+    // espNowEngine.init();
 }
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
 
     // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
@@ -139,22 +139,14 @@ void setup()
     displayEngine.init();
     // setup SD card
     setupSD();
-    if (initFailed)
-    {
+    if (initFailed) {
         // if we couldn't init the SD card, we get no sound; exit now
         return;
     }
 
-
     initEspNow();
 
     setupBluetooth(onBluetoothMetadata, DAC_PIN_DCK, DAC_PIN_WS, DAC_PIN_DATA_OUT);
-
-    // to do - read last volume saved?
-    audioEngine.init(1.0f);
-    wandEngine.init();
-    packEngine.init();
-    smokeEngine.init();
 
     /************* EVENT ATTACHING ***************/
 
@@ -176,6 +168,15 @@ void setup()
     packEngine.attach(&smokeEngine);
     // pack would tell audio engine that is has overheated, in order to change the sounds
     packEngine.attach(&audioEngine);
+
+    // espnow engine needs to know when bluetooth is turned on since they are not compatible :sadface:
+    eventEngine.attach(&espNowEngine);
+
+    // to do - read last volume saved?
+    audioEngine.init(1.0f);
+    wandEngine.init();
+    packEngine.init();
+    smokeEngine.init();
 
     initPreferences();
 

@@ -38,6 +38,9 @@ void EventEngine::handleEvent(EventArgs args) {
         // rebroadcast (event came from menu system) - to be handle by smoke engine and pack engine (turn on vent light)
         Subject::notify(args);
     }
+    if (args.eventName == CMD_RESTART_PACK) {
+        ESP.restart();
+    }
 }
 
 void EventEngine::handleThemeChangeEvent(EventArgs args) {

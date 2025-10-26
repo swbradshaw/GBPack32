@@ -133,22 +133,23 @@ LCDML_addAdvanced (5 , LCDML_0_1       , 5  , NULL,          "Christmas"      , 
 LCDML_addAdvanced (6 , LCDML_0_1       , 6  , NULL,          "KITT"      , mFunc_changeTheme,       5,            _LCDML_TYPE_default);                    // NULL = no menu function
 LCDML_addAdvanced (7 , LCDML_0_1       , 7  , NULL,          "Hannukah"      , mFunc_changeTheme,       6,            _LCDML_TYPE_default);                    // NULL = no menu function
 LCDML_addAdvanced (8 , LCDML_0_1       , 8  , NULL,          "St. Patrick"      , mFunc_changeTheme,       7,            _LCDML_TYPE_default);                    // NULL = no menu function
-LCDML_add         (9 , LCDML_0_1       , 9  , "Back"             , mFunc_back);              // this menu function can be found on "LCDML_display_menuFunction" tab
-LCDML_addAdvanced (10 , LCDML_0         , 2  , NULL,          ""                  , mHumming_para,                0,   _LCDML_TYPE_dynParam);
+LCDML_addAdvanced (9 , LCDML_0_1       , 9  , NULL,          "Baseball"      , mFunc_changeTheme,       8,            _LCDML_TYPE_default);                    // NULL = no menu function
+LCDML_add         (10 , LCDML_0_1       , 10  , "Back"             , mFunc_back);              // this menu function can be found on "LCDML_display_menuFunction" tab
+LCDML_addAdvanced (11 , LCDML_0         , 2  , NULL,          ""                  , mHumming_para,                0,   _LCDML_TYPE_dynParam);
 
-LCDML_addAdvanced (11 , LCDML_0         , 3  , NULL,          "Special"      , NULL,             0,            _LCDML_TYPE_default);                    // NULL = no menu function
-LCDML_addAdvanced (12 , LCDML_0_3       , 1  , NULL,          "Pack Startup"      , mFunc_packStart,  6,            _LCDML_TYPE_default);                    // NULL = no menu function
-LCDML_addAdvanced (13 , LCDML_0_3       , 2  , NULL,          "Vent - Short"      , mFunc_vent,       6,            _LCDML_TYPE_default);                    // NULL = no menu function
-LCDML_addAdvanced (14 , LCDML_0_3       , 3  , NULL,          "Vent - Long"      , mFunc_vent,       12,            _LCDML_TYPE_default);                    // NULL = no menu function
-LCDML_add         (15 , LCDML_0_3       , 4  , "Back"             , mFunc_back);
-
-
-LCDML_addAdvanced (16 , LCDML_0         , 4  , NULL,          ""                  , mVolume_para,                0,   _LCDML_TYPE_dynParam);                     // NULL = no menu function)
-LCDML_addAdvanced (17, LCDML_0         , 5  , NULL,          ""                  , mBluetooth_para,                0,   _LCDML_TYPE_dynParam);
-LCDML_addAdvanced (18, LCDML_0         , 6  , COND_hide,  "screensaver"        , mFunc_screensaver,        0,   _LCDML_TYPE_default);       // this menu function can be found on "LCDML_display_menuFunction" tab
+LCDML_addAdvanced (12 , LCDML_0         , 3  , NULL,          "Special"      , NULL,             0,            _LCDML_TYPE_default);                    // NULL = no menu function
+LCDML_addAdvanced (13 , LCDML_0_3       , 1  , NULL,          "Pack Startup"      , mFunc_packStart,  6,            _LCDML_TYPE_default);                    // NULL = no menu function
+LCDML_addAdvanced (14 , LCDML_0_3       , 2  , NULL,          "Vent - Short"      , mFunc_vent,       6,            _LCDML_TYPE_default);                    // NULL = no menu function
+LCDML_addAdvanced (15 , LCDML_0_3       , 3  , NULL,          "Vent - Long"      , mFunc_vent,       12,            _LCDML_TYPE_default);                    // NULL = no menu function
+LCDML_add         (16 , LCDML_0_3       , 4  , "Back"             , mFunc_back);
 
 
-#define _LCDML_DISP_cnt    18
+LCDML_addAdvanced (17 , LCDML_0         , 4  , NULL,          ""                  , mVolume_para,                0,   _LCDML_TYPE_dynParam);                     // NULL = no menu function)
+LCDML_addAdvanced (18, LCDML_0         , 5  , NULL,          ""                  , mBluetooth_para,                0,   _LCDML_TYPE_dynParam);
+LCDML_addAdvanced (19, LCDML_0         , 6  , COND_hide,  "screensaver"        , mFunc_screensaver,        0,   _LCDML_TYPE_default);       // this menu function can be found on "LCDML_display_menuFunction" tab
+
+
+#define _LCDML_DISP_cnt    19
 LCDML_createMenu(_LCDML_DISP_cnt);
 
 void setupMenu() {

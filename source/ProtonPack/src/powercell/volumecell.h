@@ -7,9 +7,9 @@
 #include <FastLED.h>
 #include <Adafruit_NeoPixel.h>
 
-class EightyFour : public Powercell {
+class VolumeCell : public Powercell {
     public:
-        EightyFour(Adafruit_NeoPixel &strip, uint8_t startLED, uint8_t endLED, uint32_t color) : _packLeds(strip), startLED(startLED), endLED(endLED), color(color) {};
+        VolumeCell(Adafruit_NeoPixel &strip, uint8_t startLED, uint8_t endLED, uint32_t color) : _packLeds(strip), startLED(startLED), endLED(endLED), color(color) {};
         virtual void init();
         virtual void boot();
         virtual void idle(bool force);
@@ -22,31 +22,23 @@ class EightyFour : public Powercell {
         virtual void setPercent(float percent);
         virtual void setOverheating(int stage);
 
-        virtual ~EightyFour() {};
+        virtual ~VolumeCell() {};
 
     private:
         Adafruit_NeoPixel &_packLeds;
         const uint8_t startLED;
         const uint8_t endLED;
         uint32_t color = 0;
-        uint8_t index = 0;
         uint8_t totalLEDs = 0;
-        uint8_t totalSteps = 0;
-        uint8_t segmentIndex = 0;
-        uint8_t overHeatStage = 0;
-        bool bootComplete = false;
-        unsigned long interval = 75;
+        float multiplier = 1.0f;
+        float volumeMeterDivider = 0.0f;
+        unsigned long interval = 25;
         unsigned long lastUpdate;
         Powercell_Pattern  activePattern;
-        Powercell_Direction direction;
-        void increment();
+
         void clear();
-        void setInterval();
-
-
-        void virtual bootUpdate();
-        void virtual idleUpdate();
-        void virtual powerDownUpdate();
-        void virtual ventUpdate();
+        void draw();
+        uint8_t nextHeight = 0;
+        uint8_t currentHeight = 0;
 
 };

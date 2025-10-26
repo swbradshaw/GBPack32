@@ -13,7 +13,7 @@
 #include "packs.h"
 
 
-static long SCREEN_TIMEOUT = 30000; // 30 seconds
+static long SCREEN_TIMEOUT = 20000; // 20 seconds
 static long WATCH_SLEEP_TIMEOUT = 120000; // 2 minutes
 LV_IMG_DECLARE(gblogo);
 
@@ -21,10 +21,15 @@ millisDelay ms_logo;
 millisDelay ms_screenTimeout;
 millisDelay ms_checkLastTouch;
 millisDelay ms_watchSleepTimeout;
+millisDelay ms_ClickTimeout;
 EspNowEngine espNowEngine;
+
+int crownClickCount = 0;
 
 RTC_DATA_ATTR int bootCount = 0;
 bool  pmu_flag = false;
+
+long lastTouch = 0;
 
 const char *get_wakeup_reason()
 {
@@ -43,19 +48,23 @@ void setFlag(void)
     pmu_flag = true;
 }
 
-
-
-// todo
-// operation menu ( vent)
-// change volume
-// cycle background , turn on/off background
-// trigger custom sound
-// simple menu (theme, background, volume, special, bluetooth)
-
-
+static void touchpad_read( lv_indev_t *drv, lv_indev_data_t *data )
+{
+    static int16_t x, y;
+    auto *plane = (LilyGo_Display *)lv_indev_get_user_data(drv);
+    uint8_t touched = plane->getPoint(&x, &y, 1);
+    if ( touched ) {
+        data->point.x = x;
+        data->point.y = y;
+        data->state = LV_INDEV_STATE_PR;
+        lastTouch = millis();
+        return;
+    }
+    data->state = LV_INDEV_STATE_REL;
+}
 
 lv_obj_t *tv;
-const lv_font_t *menufont = &lv_font_montserrat_20;
+const lv_font_t *menufont = &lv_font_montserrat_22;
 
 void initEspNow() {
 
@@ -79,8 +88,12 @@ void loadPrefs() {
     closePrefs();
 }
 
+void clearScreen() {
+  lv_obj_clean(lv_screen_active());
+}
+
 void showLogo() {
-    watch.clearScreen();
+    clearScreen();
     lv_obj_t * bg = lv_image_create(lv_screen_active());
     lv_image_set_src(bg, &gblogo);
     lv_obj_align(bg, LV_ALIGN_CENTER, 0, 0);
@@ -97,62 +110,105 @@ void handleStart() {
         // only show the boot logo if this is a cold boot
         showLogo();
     } else {
-        watch.clearScreen();
+        clearScreen();
         create_main_view();
     }
 }
 
 void setup() {
     Serial.begin(115200);
-    watch.begin();
-    beginLvglHelper();
+    instance.begin();
+    beginLvglHelper(instance);
+    lv_indev_t * indev_touch = lv_indev_get_next(NULL);
+    lv_indev_set_type(indev_touch, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_read_cb(indev_touch, touchpad_read);
+    instance.setBrightness(50);
+
     loadPrefs();
 
     initEspNow();
     ms_screenTimeout.start(SCREEN_TIMEOUT); // 30 seconds screen timeout
     ms_checkLastTouch.start(500);
     ms_watchSleepTimeout.start(WATCH_SLEEP_TIMEOUT); // 2 minutes watch sleep timeout
-    watch.clearPMU();
+
     handleStart();
+
+    instance.onEvent([](DeviceEvent_t event, void * user_data) {
+        ms_watchSleepTimeout.restart();
+        ms_ClickTimeout.start(300);
+        crownClickCount++;
+    }, PMU_EVENT_KEY_CLICKED, NULL);
+
+    instance.onEvent([](DeviceEvent_t event, void * user_data) {
+        ms_watchSleepTimeout.restart();
+        espNowEngine.sendEventWithDetail("EVENT_SMOKE_TURN_ON", "5000");
+    }, PMU_EVENT_KEY_LONG_PRESSED, NULL);
+
   }
 
+
+void vibrate() {
+  instance.drv.setWaveform(0, HAPTIC_WAVEFORM_CLICK);  // play effect
+  instance.drv.run();
+}
 
 void processTimers() {
 
     if (ms_logo.justFinished()) {
-        watch.clearScreen();
+        clearScreen();
         create_main_view();
       }
       if (ms_screenTimeout.justFinished()) {
-        watch.setBrightness(0); // turn off the screen
+        instance.setBrightness(0); // turn off the screen
         screenOn = false;
+        debugln("screen off");
+        // instance.lightSleep(WAKEUP_SRC_TOUCH_PANEL);
+        // ms_screenTimeout.restart();
       }
       if (ms_checkLastTouch.justFinished()) {
         ms_checkLastTouch.restart();
-        if (millis() - watch.getLastTouch() < 300) {
+        if (millis() - lastTouch < 300) {
             // touched
             ms_screenTimeout.restart();
             ms_watchSleepTimeout.restart();
             if (!screenOn) {
-                watch.setBrightness(50); // turn on the screen
+                instance.setBrightness(50); // turn on the screen
                 screenOn = true;
-                lv_tick_inc(LV_DISP_DEF_REFR_PERIOD);
+                debugln("screen on?");
+                lv_tick_inc(10);
                 ms_watchSleepTimeout.restart();
             }
         }
       }
       if (ms_watchSleepTimeout.justFinished()) {
         // put watch to sleep
-        watch.setSleepMode(TOUCH_WAKEUP);
-        watch.sleep();
+        // instance.setSleepMode(TOUCH_WAKEUP);
+        instance.sleep(WAKEUP_SRC_TOUCH_PANEL); //WAKEUP_SRC_TOUCH_PANEL);
+      }
+      if (ms_ClickTimeout.justFinished()) {
+        // Handle click timeout
+        if (crownClickCount == 1) {
+            espNowEngine.sendEvent(EVENT_AUDIO_SHUFFLE_BACKGROUND);
+        }
+        if (crownClickCount == 2) {
+          // stop audio
+            espNowEngine.sendEventWithDetail(EVENT_BUTTON_AUDIO, "LONG_CLICK");
+        }
+        if (crownClickCount > 4) {
+          // restart pack
+          espNowEngine.sendEvent(CMD_RESTART_PACK);
+        }
+        crownClickCount = 0;
       }
 }
+
 
 void loop() {
     delay(5);
     lv_task_handler();
     lv_tick_inc(5);
     processTimers();
+    instance.loop();
 }
 
 

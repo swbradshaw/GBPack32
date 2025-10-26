@@ -7,6 +7,7 @@ void EightyFour::init() {
 }
 
 void EightyFour::notify(EventArgs args) {}
+void EightyFour::setPercent(float percent) {}
 
 bool EightyFour::work() {
      if ((millis() - lastUpdate) > interval) {

@@ -23,6 +23,7 @@ class LedRing : public Cyclotron {
         virtual void setCustomValue(int name, String value);
         virtual void increment();
         virtual void setOverheating(int stage);
+        virtual void setPercent(float percent);
         virtual ~LedRing() {};
         void clear();
 

@@ -56,6 +56,8 @@ void KittPowercell::notify(EventArgs args) {
     }
 }
 
+void KittPowercell::setPercent(float percent) {}
+
 void KittPowercell::packOff() {
     activePattern = PC_OFF;
 }

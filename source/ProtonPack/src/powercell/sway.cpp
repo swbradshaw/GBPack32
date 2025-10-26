@@ -31,8 +31,8 @@ bool Sway::work() {
    return false;
 }
 
-void Sway::notify(EventArgs args) {
-}
+void Sway::notify(EventArgs args) {}
+void Sway::setPercent(float percent) {}
 
 void Sway::packOff() {
     activePattern = PC_OFF;

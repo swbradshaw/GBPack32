@@ -27,6 +27,7 @@ class GBAudioPlayer : public Subject<EventArgs>, public AudioInfoSupport
     void playFile(String filename);
     void setFollowEvent(String event);
     void setVolume(float volume);
+    void shouldSendVolumeEvents(bool send);
     float getVolume();
     void playFile(String filename, uint32_t startPosition);
     void audioLoop();
@@ -40,15 +41,18 @@ class GBAudioPlayer : public Subject<EventArgs>, public AudioInfoSupport
     FadeStream fade;
     AudioInfo info;
     MP3DecoderHelix decoder;
+    VolumeMeter volume_meter_out;
     // WAVDecoder wavDecoder;
     StreamCopy copier;
     File audioFile;
     bool playing = false;
     bool audioInitialized = false;
     float current_volume = -1.0f;
+    bool sendVolumeEvents = false;
     String lastPlayed = "";
     String postEvent = "";
     void notifyStopped();
+    void sendVolumeEvent(float volume);
     void dataCallback(MP3FrameInfo &info, short *pcm_buffer, size_t len, void* ref);
 
 };

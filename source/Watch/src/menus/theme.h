@@ -39,6 +39,8 @@ lv_obj_t * create_theme_menu(lv_obj_t * parent) {
     lv_obj_add_event_cb(btn, theme_event_handler, LV_EVENT_CLICKED, (void*)"6");
     btn = lv_list_add_btn(theme_menu, NULL, "Irish");
     lv_obj_add_event_cb(btn, theme_event_handler, LV_EVENT_CLICKED, (void*)"7");
+    btn = lv_list_add_btn(theme_menu, NULL, "Baseball");
+    lv_obj_add_event_cb(btn, theme_event_handler, LV_EVENT_CLICKED, (void*)"8");
 
     return theme_menu;
 }

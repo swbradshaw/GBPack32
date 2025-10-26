@@ -194,9 +194,14 @@ void AudioEngine::handleOverheatEvent(EventArgs args) {
 
 void AudioEngine::handleAudioEvent(EventArgs args) {
 
-    debugln("handleAudioEvent in AudioEngine: " + args.eventName);
+    // debugln("handleAudioEvent in AudioEngine: " + args.eventName);
     if (args.eventName == EVENT_AUDIO_INIT) {
         startMainBackgroud();
+        return;
+    }
+    if (args.eventName == EVENT_AUDIO_SEND_VOLUME_EVENTS) {
+        player.shouldSendVolumeEvents(args.eventDetail1.toInt() > 0);
+        return;
     }
     if (args.eventName == EVENT_AUDIO_STOPPED_PLAYING) {
         handleFollowUpEvent(args.emitFollowUpEvent);

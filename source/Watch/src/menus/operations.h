@@ -6,7 +6,6 @@
 
 extern EspNowEngine espNowEngine;
 extern const lv_font_t *menufont;
-extern LilyGoLib watch;
 
 void handleEvent(const char *event) {
     // Handle the event here
@@ -22,8 +21,8 @@ void handleEvent(const char *event) {
     } else if (strcmp(event, EVENT_WATCH_TURN_WAND_OFF) == 0) {
         espNowEngine.sendEvent("EVENT_WATCH_TURN_WAND_OFF");
     }
-    watch.setWaveform(0, HAPTIC_WAVEFORM_CLICK);  // play effect
-    watch.run();
+    instance.drv.setWaveform(0, HAPTIC_WAVEFORM_CLICK);  // play effect
+    instance.drv.run();
 }
 
 

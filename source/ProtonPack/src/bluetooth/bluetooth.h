@@ -2,6 +2,11 @@
 #define _BLUETOOTH_H_
 
 #include "BluetoothA2DPSink.h"
+#include "AudioTools.h"
+#include <Arduino.h>
+#include <WiFi.h>
+#include <esp_mac.h>
+
 void setupBluetooth(void (*bluetoothMetadataCallback)(int, const uint8_t *text), uint8_t BCK_PIN, uint8_t WS_PIN, uint8_t DATA_OUT_PIN);
 bool isBluetoothOn();
 void startBluetooth();

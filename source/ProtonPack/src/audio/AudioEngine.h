@@ -7,7 +7,7 @@
 #include "AudioTheme.cpp"
 #include "GBAudioPlayer.h"
 
-class AudioEngine : public Observer<EventArgs>
+class AudioEngine : public Observer<EventArgs>, public Subject<EventArgs>
 {
   public:
     AudioEngine();

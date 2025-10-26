@@ -20,10 +20,6 @@ bool const DEBUG = true;
 #define debugln(x)
 #endif
 
-// enum PackTheme { MOVIE, STATIS, SLIME, MESON, CHRISTMAS };
-// enum PackTheme THEME;
-
-
 // ESP32 GPIO PINS
 
 // BUTTONS
@@ -100,7 +96,7 @@ const uint8_t CYCLOTRON_IDLE_INTERVAL = 95;
 const uint8_t POWERCELL_UPDATE_INTERVAL= 75;
 const uint8_t POWERCELL_BOOT_INTERVAL= 15;
 
-/* maximum time that the smoker can be ON */
+/* maximum time that the smoke relay can be ON */
 const uint32_t SMOKER_MAX_ON_TIME = 30000; // in ms
-/* minimum OFF time of the smoker */
+/* minimum OFF time of the smoke relay */
 const uint32_t SMOKER_MIN_OFF_TIME = 2000; // in ms

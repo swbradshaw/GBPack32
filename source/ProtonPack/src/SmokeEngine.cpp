@@ -67,8 +67,11 @@ void SmokeEngine::smokeOFF()
 }
 
 void SmokeEngine::handleEvent(EventArgs args) {
-    if (args.eventName == EVENT_SMOKE_ON) {
+    if (args.eventName == EVENT_SMOKE_ON || args.eventName == EVENT_SMOKE_TURN_ON) {
         startSmoke(args.eventDetail1.toInt());
+    }
+    if (args.eventName == EVENT_SMOKE_TURN_OFF) {
+        smokeOFF();
     }
 }
 
