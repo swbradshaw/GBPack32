@@ -1,5 +1,6 @@
 # Ghostbusters Proton pack implementation using ESP32
 
+[<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/370c3f8d-1144-45d1-8703-2e47c40395bf" />](https://youtu.be/YyFdge-5e7U)
 ESP32 implementation of a Ghostbusters proton pack. This is an Arduino C++ class-based implementation and follows an Observer pattern for communication between different components.
 
 Project goals:
